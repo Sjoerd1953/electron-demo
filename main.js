@@ -1,14 +1,17 @@
-const { app, BrowserWindow, Menu } = require('electron')
-const shell = require('electron').shell
+const { app, BrowserWindow, Menu, ipcMain } = require('electron')
+const shell = require('electron')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
-let menu
+let MainMmenu
 
 function createWindow () {
     // Create the browser window.
-    win = new BrowserWindow({ width: 1500, height: 800 })
+    win = new BrowserWindow({
+        width: 800,
+        height: 800
+    })
 
     // and load the index.html of the app.
     win.loadFile('src/index.html')
@@ -24,25 +27,9 @@ function createWindow () {
         win = null
     })
 
-    menu = Menu.buildFromTemplate([{
-        label:'Menu',
-        submenu:[
-            {label:'Item 1'},
-            {
-                label:'Open eigen website',
-                click(){shell.openExternal('http://van-staveren.net')}
-
-            },
-            {type:'separator'},
-            {
-                label:'Exit',
-                click(){app.quit()}
-            }
-        ]
-
-    }])
-
-    Menu.setApplicationMenu(menu);
+    // Add menu
+    MainMmenu = Menu.buildFromTemplate(MainMenuTemplate)
+    Menu.setApplicationMenu(MainMmenu);
 }
 
 // This method will be called when Electron has finished
@@ -67,5 +54,24 @@ app.on('activate', () => {
     }
 })
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+// Create MainMenu template
+const MainMenuTemplate = [
+    {
+    label:'Menu',
+        submenu:[
+            {
+                label:'Pop Up',                
+                click(){}  
+            },
+            {
+                label:'Open eigen website',
+                click(){shell.openExternal('http://van-staveren.net')}
+            },
+            {type:'separator'},
+            {
+                label:'Exit',
+                click(){app.quit()}
+            }
+        ]
+    }        
+]
