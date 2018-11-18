@@ -1,41 +1,51 @@
-const { app, BrowserWindow, Menu, ipcMain } = require('electron')
-const shell = require('electron')
+//Insert Electron modules
+const electron = require('electron');
+const BrowserWindow = electron.BrowserWindow;
+const app = electron.app;
+const Menu = electron.Menu;
+const shell = electron.shell;
+
+//Insert Node.js modules
+const path = require('path');
+const url = require('url');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let win
-let MainMmenu
+let MainWindow;
+let MainWindowMenu;
 
 function createWindow () {
     // Create the browser window.
-    win = new BrowserWindow({
+    MainWindow = new BrowserWindow({
         width: 800,
-        height: 800
+        height: 600
     })
 
     // and load the index.html of the app.
-    win.loadFile('src/index.html')
-
-    // Open the DevTools.
-    //win.webContents.openDevTools()
+    MainWindow.loadURL(url.format({
+        pathname: path.join(__dirname, 'src/index.html'),
+        protocol: 'file',
+        slashes: 'true'
+    }))
 
     // Emitted when the window is closed.
-    win.on('closed', () => {
+    MainWindow.on('closed', () => {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
-        win = null
+        MainWindow = null
     })
-
-    // Add menu
-    MainMmenu = Menu.buildFromTemplate(MainMenuTemplate)
-    Menu.setApplicationMenu(MainMmenu);
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', function(){
+    createWindow()
+    // Add menu
+    MainWindowMenu = Menu.buildFromTemplate(MainWindowMenuTemplate)
+    Menu.setApplicationMenu(MainWindowMenu)
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -49,19 +59,19 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (win === null) {
+    if (MainWindow === null) {
         createWindow()
     }
 })
 
-// Create MainMenu template
-const MainMenuTemplate = [
+// Create menu template for MainWindow
+const MainWindowMenuTemplate = [
     {
     label:'Menu',
         submenu:[
             {
                 label:'Pop Up',                
-                click(){}  
+                click(){console.log('PopUp clicked')}  
             },
             {
                 label:'Open eigen website',
@@ -73,5 +83,15 @@ const MainMenuTemplate = [
                 click(){app.quit()}
             }
         ]
+    },
+    {
+        label: 'Development',
+            submenu:[
+            {
+                label:'Development console',
+                click(){MainWindow.webContents.openDevTools()}
+            }    
+
+            ]
     }        
 ]
