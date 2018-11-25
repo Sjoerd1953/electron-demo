@@ -9,6 +9,10 @@
   "author": "Sjoerd van Staveren",
   "license": "ISC",
   "dependencies": {
-    "electron": "^3.0.9"
+    "electron": "^3.0.9",
+    "sqlite3": "^4.0.4"
+  },
+  "devDependencies": {
+    "electron-rebuild": "^1.8.2"
   }
 }

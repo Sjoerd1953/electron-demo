@@ -18,7 +18,8 @@ function createWindow () {
     // Create the browser window.
     MainWindow = new BrowserWindow({
         width: 800,
-        height: 600
+        height: 600,
+        show: false
     })
 
     // and load the index.html of the app.
@@ -42,6 +43,12 @@ function createWindow () {
 // Some APIs can only be used after this event occurs.
 app.on('ready', function(){
     createWindow()
+
+    //Wait for window build-up to be completed
+    MainWindow.once('ready-to-show', () => {
+        MainWindow.show()
+    })
+
     // Add menu
     MainWindowMenu = Menu.buildFromTemplate(MainWindowMenuTemplate)
     Menu.setApplicationMenu(MainWindowMenu)
@@ -63,6 +70,8 @@ app.on('activate', () => {
         createWindow()
     }
 })
+
+
 
 // Create menu template for MainWindow
 const MainWindowMenuTemplate = [

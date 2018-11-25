@@ -1,15 +1,18 @@
-const BrowserWindow = require('electron').remote.BrowserWindow;
+const electron = require('electron').remote;
+const BrowserWindow = electron.BrowserWindow;
+
 const path = require('path');
 const url = require('url');
 
-console.log(document.getElementById('CreateWindowBtn'))
+let PopUpWindow
 
 const CreateWindowBtn = document.getElementById('CreateWindowBtn');
 
 CreateWindowBtn.addEventListener('click', function(event){
-    let PopUpWindow = new BrowserWindow({
+    PopUpWindow = new BrowserWindow({
         width: 400,
-        height: 200
+        height: 200,
+        show: false
     });
 
     PopUpWindow.loadURL(url.format({
@@ -18,5 +21,8 @@ CreateWindowBtn.addEventListener('click', function(event){
         slashes: true
     }))
 
-    
+    //Wait for window build-up to be completed
+    PopUpWindow.once('ready-to-show', () => {
+        PopUpWindow.show()
+    })
 })
