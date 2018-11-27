@@ -8,12 +8,16 @@ const shell = electron.shell;
 //Insert Node.js modules
 const path = require('path');
 const url = require('url');
+const sqlite3 = require('sqlite3')
+
+
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let MainWindow;
 let MainWindowMenu;
 
+// ----------------------------------------- Functions ----------------------------------------------------
 function createWindow () {
     // Create the browser window.
     MainWindow = new BrowserWindow({
@@ -37,6 +41,36 @@ function createWindow () {
         MainWindow = null
     })
 }
+
+function createDatabase (dbname){
+    //Connect to database. If database doesn't exist it is created
+    let db = new sqlite3.Database('./database/' + dbname + '.db')
+    //Create tables. Only if tables do not exist
+    db.serialize(function ()
+        {
+        db.run("CREATE TABLE IF NOT EXISTS Individuals("
+                + "Id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "ChildOf INTEGER,"
+                + "Title TEXT,"
+                + "Prefix_FN TEXT,"
+                + "FirstName TEXT,"
+                + "Patronymical TEXT,"
+                + "Prefix_LN TEXT,"
+                + "LastName TEXT)"
+                );
+
+        db.run("CREATE TABLE IF NOT EXISTS Families("
+                + "Id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "Father INTEGER,"
+                + "Mother INTEGER,"
+                + "FOREIGN KEY(Father) REFERENCES Individuals(Id),"
+                + "FOREIGN KEY(Mother) REFERENCES Individuals(Id))"
+                );
+        }    
+    )
+    db.close
+}
+//-----------------------------------------------------------------------------------------------------------
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -71,16 +105,14 @@ app.on('activate', () => {
     }
 })
 
-
-
 // Create menu template for MainWindow
 const MainWindowMenuTemplate = [
     {
     label:'Menu',
         submenu:[
             {
-                label:'Pop Up',                
-                click(){console.log('PopUp clicked')}  
+                label:'Create Database',                
+                click(){createDatabase('Gendata')}  
             },
             {
                 label:'Open eigen website',

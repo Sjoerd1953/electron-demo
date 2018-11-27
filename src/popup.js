@@ -3,7 +3,7 @@ const sqlite3 = require('sqlite3')
 var db = new sqlite3.Database('./database/test.db');
 
 db.serialize(function () {
-    db.run("CREATE TABLE Products (name, barcode, quantity)");
+    db.run("CREATE TABLE IF NOT EXISTS Products (name, barcode, quantity)");
   
     db.run("INSERT INTO Products VALUES (?, ?, ?)", ['product001', 'xxxxx', 20]);
     db.run("INSERT INTO Products VALUES (?, ?, ?)", ['product002', 'xxxxx', 40]);
